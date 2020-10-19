@@ -74,6 +74,13 @@ Please refer to the paper for more technical details.
 make debug<br /> 
 
 ## Running
+
+File ZonoStrips.cpp for protocol 1 with zonotopes.<br />
+File ZonoEntities.cpp for protocol 2 with zonotopes.<br />
+File ConZonoStrips.cpp for protocol 1 with constrained zonotopes.<br />
+File ConZonoEntities.cpp for protocol 2 with constrained zonotopes.<br />
+copy the required file to main cpp then make all<br />
+
 1- This will run main.cpp <br />
  ./HW <br />
 2- This will generate file under "MATLAB/CMatFiles/FILENAME"<br />
