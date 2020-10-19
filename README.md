@@ -7,12 +7,23 @@ We propose privacy-preserving set-based estimation protocols using partially hom
 We consider two problem setups:
 
 1- Distributed sensor
+The setup is as follows:
+<br /> <br />
+<p align="center">
+<img
+src="Figures/setup.png"
+raw=true
+alt="Subject Pronouns"
+width=500
+/>
+</p>
+
 Aggregator collects encrypted strips from each sensor and intersects them with the previous estimated set to obtain a new corrected set.  
 
 <br /> <br />
 <p align="center">
 <img
-src="output/meas2.png"
+src="Figures/prt1.png"
 raw=true
 alt="Subject Pronouns"
 width=500
@@ -20,42 +31,55 @@ width=500
 </p>
 
 2- Distributed sensor groups
+
+<br /> <br />
+<p align="center">
+<img
+src="Figures/setupGrp.png"
+raw=true
+alt="Subject Pronouns"
+width=500
+/>
+</p>
 Each sensor group manager collects a set of strips from its sensors and intersects them with previous sets. Then share with the aggregator an encrypted set. The aggregator collects encrypted sets from each sensor group and intersects them with the previous estimated set to obtain a new corrected set.  
 
-
+<br /> <br />
+<p align="center">
+<img
+src="Figures/prt2.png"
+raw=true
+alt="Subject Pronouns"
+width=500
+/>
+</p>
 Please refer to the paper for more technical details. 
 
 
 ## Building
 
 
-install Visual Studio Code 
-add extention c/c++
-clone this repo
-open Visual Studio Code
-file--> open folder (open the repo folder)
-Make sure that your matlab path are correct in the makefile CXXFLAGS line
-view --> terminal 
-sudo apt install libeigen3-dev
-sudo apt-get install libboost-dev
-sudo apt-get install libntl-dev
-sudo apt-get install libgmp-dev
+1- install Visual Studio Code  <br />
+2- add extention c/c++  <br />
+3- clone this repo <br />
+4- open Visual Studio Code <br />
+5- file--> open folder (open the repo folder) <br />
+6- Make sure that your matlab path are correct in the makefile CXXFLAGS line <br />
+7- view --> terminal  <br />
+8- sudo apt install libeigen3-dev <br />
+9- sudo apt-get install libboost-dev <br />
+10- sudo apt-get install libntl-dev <br />
+11- sudo apt-get install libgmp-dev <br />
+12- make all <br /> <br />
+(for debugging)<br />
+make debug<br /> 
 
-#build the project
-make all
-
-
-make debug
-
-
-
-copy the tageted file to amr_test.pp
-make all
-./HW
-This will generate file under "MATLAB/CMatFiles/FILENAME"
-run the correspoding file in matlab
-This will generate file under "cache/FILENAME"
-run 
-A-plot_ZS_cppAndMat
-B-plot_ZE_cppAndMat
+## Running
+1- This will run main.cpp <br />
+ ./HW <br />
+2- This will generate file under "MATLAB/CMatFiles/FILENAME"<br />
+3- run the correspoding file in matlab<br />
+4- This will generate file under "cache/FILENAME"<br />
+50 run <br />
+A-plot_ZS_cppAndMat<br />
+B-plot_ZE_cppAndMat<br />
 
