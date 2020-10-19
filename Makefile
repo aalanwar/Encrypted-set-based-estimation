@@ -1,6 +1,6 @@
 BINDBG := HW_debug
 BIN := HW
-MAINSRC := amr_test.cpp 
+MAINSRC := main.cpp 
 OBJDIR := .o
 OBJDBGDIR := .od
 DEPDIR := .d
