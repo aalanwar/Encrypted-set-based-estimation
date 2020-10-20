@@ -86,7 +86,7 @@ copy the required file to main cpp then make all<br />
 2- This will generate file under "MATLAB/CMatFiles/FILENAME"<br />
 3- run the correspoding file in matlab<br />
 4- This will generate file under "cache/FILENAME"<br />
-50 run <br />
+5- run <br />
 A-plot_ZS_cppAndMat<br />
 B-plot_ZE_cppAndMat<br />
 
