@@ -1,7 +1,8 @@
 # Privacy Preserving Set-Based Estimation Using Partially Homomorphic Encryption
 
 This repo cotains the code and data for our paper  <br />
-Amr Alanwar, Victor Gassmann, Xingkang He, Hazem Said, Henrik Sandberg, Karl Henrik Johansson, and Matthias Althoff "Privacy Preserving Set-Based Estimation Using Partially Homomorphic Encryption"<br />
+Amr Alanwar, Victor Gassmann, Xingkang He, Hazem Said, Henrik Sandberg, Karl Henrik Johansson, and Matthias Althoff ""<br />"[Privacy Preserving Set-Based Estimation Using Partially Homomorphic Encryption](http://arxiv.org/abs/2010.11097)"<br /><br />
+
 We propose privacy-preserving set-based estimation protocols using partially homomorphic encryption. Set-based estimation constructs a set that guarantees the inclusion of the system state. We represent sets by zonotopes and constrained zonotopes as they can compactly represent high-dimensional sets and are closed under linear maps and Minkowski addition. By selectively encrypting some parameters of the used set representations, we are able to intersect sets in the encrypted domain, which enables guaranteed state estimation while ensuring the privacy goals. In particular, we show that our protocols achieve computational privacy using formal cryptographic definitions of computational indistinguishability. We demonstrate the efficiency of our approach by localizing a mobile quadcopter using custom ultra-wideband wireless devices.
 
 We consider two problem setups:
