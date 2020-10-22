@@ -52,7 +52,8 @@ alt="Subject Pronouns"
 width=500
 />
 </p>
-Please refer to the paper for more technical details. Our Bitex is as follows
+Please refer to the paper for more technical details. Our Bitex is as follows <br />
+
 ```
 @misc{alanwar2020privacy,
       title={Privacy Preserving Set-Based Estimation Using Partially Homomorphic Encryption}, 
@@ -63,8 +64,7 @@ Please refer to the paper for more technical details. Our Bitex is as follows
       primaryClass={cs.CR}
 }
 ```
-
-
+<br />
 ## Building
 
 
