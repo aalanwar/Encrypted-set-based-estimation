@@ -52,7 +52,17 @@ alt="Subject Pronouns"
 width=500
 />
 </p>
-Please refer to the paper for more technical details. 
+Please refer to the paper for more technical details. Our Bitex is as follows
+```
+@misc{alanwar2020privacy,
+      title={Privacy Preserving Set-Based Estimation Using Partially Homomorphic Encryption}, 
+      author={Amr Alanwar and Victor Gassmann and Xingkang He and Hazem Said and Henrik Sandberg and Karl Henrik Johansson and Matthias Althoff},
+      year={2020},
+      eprint={2010.11097},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+```
 
 
 ## Building
@@ -89,4 +99,5 @@ copy the required file to main cpp then make all<br />
 5- run <br />
 A-plot_ZS_cppAndMat<br />
 B-plot_ZE_cppAndMat<br />
+
 
