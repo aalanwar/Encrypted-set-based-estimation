@@ -18,20 +18,19 @@ function [res_conzonotope]=intersectConZonoStrip1(z1,hl,Rl,yl)
 %    Z = [0 3 0 1;0 0 2 1];
 %    A = [1 0 1];
 %    b = 1;
-%    cZono1 = conZonotope(Z,A,b);
-% res_zono= intersectConZonoStrip(cZono1,hl,Rl,yl);
-% 
-%%just for comparison
-% poly = mptPolytope([1 0;-1 0; 0 1;0 -1; 1 1;-1 -1],[3;7;5;1;5;1]);
-% zpoly = cZono1& poly;
-% 
-% figure; hold on 
-% plot(z,[1 2],'r-+');
-% plot(poly,[1 2],'r-*');
-% plot(zpoly,[1 2],'b-+');
-% plot(res_zono,[1 2],'b-*');
-% 
-% legend('zonotope','strips','zono&poly','zonoStrips');
+%   cZono1 = conZonotope(Z,A,b);
+%res_czono= untitled(cZono1,hl,Rl,yl);
+
+%%just for plotting strips
+%poly = mptPolytope([1 0;-1 0; 0 1;0 -1; 1 1;-1 -1],[3;7;5;1;5;1]);
+
+
+%figure; hold on 
+%plot(cZono1,[1 2],'r-+');
+%plot(poly,[1 2],'r-*');
+%plot(res_czono,[1 2],'b-*');
+
+%legend('zonotope','strips','czonoStrips');
 %
 %
 % Other m-files required: none
