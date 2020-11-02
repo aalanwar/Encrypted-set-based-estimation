@@ -1,24 +1,25 @@
 #include <sys/time.h>
 #include <bits/stdc++.h> 
-#include "crypto/paillier.hh"
-#include <gm.hh>
 #include <NTL/ZZ.h>
 #include <gmpxx.h>
-#include <math/util_gmp_rand.h>
 #include <algorithm>    // std::rotate
 #include <math.h>
 #include <ctime>
 #include <assert.h>
-#include <EncZonotope/EncZonotope.h>
-#include <Zonotope/Zonotope.h>
-#include <EncConZonotope/EncConZonotope.h>
-#include <ConZonotope/ConZonotope.h>
-#include <eigen2mat/eigen2mat.h>
-#include <CSVReader.h>
 #include <map>
 #include <random>
-//#include <representations/EncEntity/EncEntity.h>
 #include <iostream>
+
+#include "paillier.hh"
+#include "gm.hh"
+#include "math/util_gmp_rand.h"
+#include "EncZonotope/EncZonotope.h"
+#include "Zonotope/Zonotope.h"
+#include "EncConZonotope/EncConZonotope.h"
+#include "ConZonotope/ConZonotope.h"
+#include "eigen2mat/eigen2mat.h"
+#include "CSVReader.h"
+
 
 using namespace NTL;
 using namespace std;
@@ -52,19 +53,14 @@ int main()
 	c1 << 0,0,0;
 	Zonotope zono (c1,G1);
 	EncZonotope enczono = p.encrypt(zono);
-	
-
-	
+		
 	//std::cout << "\n Zonotope Strips Intersections \n";
-
-	
-    
 	
 	// Creating an object of CSVWriter
-	CSVReader reader("zvector.csv",",");
+	CSVReader reader("zvector.csv", ",");
  
 	// Get the data from CSV File
-	std::vector<std::vector<std::string> > dataList = reader.getData();
+	std::vector<std::vector<std::string>> dataList = reader.getData();
  
 	// Print the content of row by row on screen
 	std::vector<double> z(dataList.size(),1);
@@ -75,8 +71,6 @@ int main()
 		z[index++] = std::stof(vec[0]);
 		
 	}
-
-	
 	
 	matrix_t<double> h(1,3);
 	vector_t<double> y(1) ;
@@ -107,12 +101,13 @@ int main()
 		std::vector<double> rotatingh = {1,0,0} ;
 		std::vector<EncStrip> encstripsvec;
 		encstripsvec.clear();
-		for (int j=0; j<3; j++)
+
+		for (int j = 0; j < 3; j++)
 		{
-			std::rotate(rotatingh.rbegin(),rotatingh.rbegin()+1,rotatingh.rend());
-			h << rotatingh[0],rotatingh[1],rotatingh[2];
+			std::rotate(rotatingh.rbegin(), rotatingh.rbegin() + 1, rotatingh.rend());
+			h << rotatingh[0], rotatingh[1], rotatingh[2];
 			//std::cout << h << endl;
-			if(rotatingh[1]==1)
+			if(rotatingh[1] == 1)
 			{
 				R << 0.4;
 			}
@@ -127,7 +122,7 @@ int main()
 			start_time = clock(); 
 			EncStrip encs  =  p.encrypt(s);
 			end_time = clock();
-			sensor_time[sensor_time_index++] = double(end_time - start_time)/ double(CLOCKS_PER_SEC);;
+			sensor_time[sensor_time_index++] = double(end_time - start_time) / double(CLOCKS_PER_SEC);;
 			encstripsvec.push_back(encs);
 		}
 		// to avoid overflow decrypt and encrypt
@@ -135,13 +130,16 @@ int main()
 		//enczono =  p.encrypt(unenczono);
 		start_time = clock();
 		EncZonotope res_intersect = enczono.intersect(encstripsvec);
+
 		// Time update
 		matrix_t<double> tempGen(res_intersect.mGenerators.rows(),res_intersect.mGenerators.cols()+Q.cols());
 		tempGen.block(0,0,res_intersect.mGenerators.rows(),res_intersect.mGenerators.cols()) = res_intersect.mGenerators;
 		tempGen.block(0,res_intersect.mGenerators.cols(),Q.rows(),Q.cols()) = Q;
 		EncZonotope timeupdatezono (res_intersect.mEncCenter,tempGen,&p);
 		enczono = timeupdatezono;
-		enczon	= enczono.reduce(400);
+		
+		// Reduction
+		enczono	= enczono.reduce(400);
 		end_time = clock();
 		agg_time[agg_time_index++] = double(end_time - start_time)/ double(CLOCKS_PER_SEC);;
 

@@ -1,0 +1,9 @@
+[requires]
+boost/1.74.0
+gmp/6.2.0
+ntl/11.4.3@sutorj/stable
+eigen/3.3.7
+gtest/1.10.0
+
+[generators]
+cmake

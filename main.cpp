@@ -137,6 +137,7 @@ int main()
 		// -----------------  e1  ------------------------
 		std::vector<double> rotatingh = {1,0,0} ;
 		stripsvec.clear();
+		
 		for (int j=0; j<3; j++)
 		{
 			std::rotate(rotatingh.rbegin(),rotatingh.rbegin()+1,rotatingh.rend());
@@ -249,9 +250,11 @@ int main()
 		matindex  = matindex +1;
 
 	}
-		std::string filename = "MATLAB/CMatFiles/cppCZonoEntities.mat";		
-		Eigen2Mat::writeToFile(varMap, filename.c_str());
-		double avg = 0;
+	
+	std::string filename = "MATLAB/CMatFiles/cppCZonoEntities.mat";		
+	Eigen2Mat::writeToFile(varMap, filename.c_str());
+	double avg = 0;
+
 	for (int i=0; i<sensor_time_index;i++ )
 	{
 		avg = avg + sensor_time[i];

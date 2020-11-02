@@ -19,8 +19,11 @@ using namespace NTL;
  */
 
 Paillier::Paillier(const vector<mpz_class> &pk, gmp_randstate_t state)
-    : n(pk[0]), g(pk[1]),
-      nbits(mpz_sizeinbase(n.get_mpz_t(),2)), n2(n*n), good_generator(g == n+1)
+    : n(pk[0])
+    , g(pk[1])
+    , nbits(mpz_sizeinbase(n.get_mpz_t(),2))
+    , n2(n*n)
+    , good_generator(g == n+1)
 {
     assert(pk.size() == 2);
     gmp_randinit_set(_randstate, state);
@@ -28,11 +31,9 @@ Paillier::Paillier(const vector<mpz_class> &pk, gmp_randstate_t state)
     //prepare encryption of zero
     zero_enc.mantissa = encrypt(0) ;
     zero_enc.exponent = 0;
-
 }
 
-void
-Paillier::rand_gen(size_t niter, size_t nmax)
+void Paillier::rand_gen(size_t niter, size_t nmax)
 {
     if (rqueue.size() >= nmax)
         niter = 0;
@@ -40,7 +41,9 @@ Paillier::rand_gen(size_t niter, size_t nmax)
         niter = min(niter, nmax - rqueue.size());
 
     mpz_class r;
-    for (uint i = 0; i < niter; i++) {
+
+    for (uint i = 0; i < niter; i++) 
+    {
         mpz_urandomm(r.get_mpz_t(),_randstate,n.get_mpz_t());
 
         rqueue.push_back(mpz_class_powm(g,n*r,n2));
@@ -50,11 +53,12 @@ Paillier::rand_gen(size_t niter, size_t nmax)
 encnum Paillier::encode( double plaintext) const
 {
     double max_int = n.get_d()/3 -1;
-    double nsquare = n.get_d() * n.get_d() ;
+    double nsquare = n.get_d() * n.get_d();
 
     encnum x;
     double floatpart, intpart,prec_exponent;
     double int_rep;
+
     if(acc_per)
     {
 
@@ -76,26 +80,26 @@ encnum Paillier::encode( double plaintext) const
             prec_exponent =  floor(bin_lsb_exponent / LOG2_BASE);
         }
     }
-   else
+    else
     {
         prec_exponent = floor(logbase(precision, BASE));
-
     }
-	  /*Remember exponents are negative for numbers < 1.
-        # If we're going to store numbers with a more negative
-        # exponent than demanded by the precision, then we may
-        # as well bump up the actual precision.
-		*/
+
+    /*Remember exponents are negative for numbers < 1.
+    # If we're going to store numbers with a more negative
+    # exponent than demanded by the precision, then we may
+    # as well bump up the actual precision.
+    */
 
     if (acc_per)
-            x.exponent = prec_exponent;
+        x.exponent = prec_exponent;
     else
         x.exponent = min((int)max_exponent, (int)prec_exponent);
 
     int_rep = double(round( plaintext * pow(BASE, -x.exponent)));
 
-        if (abs(int_rep) > max_int)
-            cout << "Integer needs to be within range ";
+    if (abs(int_rep) > max_int)
+        cout << "Integer needs to be within range ";
 
     // Wrap negative numbers by adding n
 	x.mantissa = int_rep % n;
@@ -105,35 +109,53 @@ encnum Paillier::encode( double plaintext) const
 
 encnum Paillier::encrypt_f(double plaintext)
 {
-
 	encnum x = encode(plaintext);
+    x.mantissa = encrypt(x.mantissa);
 
-	x.mantissa = encrypt(x.mantissa);
-  return x;
+    return x;
 }
 
-EncZonotope Paillier::encrypt(const Zonotope& zono) {
-  return EncZonotope(encryptVector_f(zono.mCenter),zono.mGenerators,this);
+EncZonotope Paillier::encrypt(const Zonotope& zono) 
+{
+  return EncZonotope(encryptVector_f(zono.mCenter), zono.mGenerators, this);
 }
 
-
-EncConZonotope Paillier::encrypt(const ConZonotope& conzono) {
-  return EncConZonotope(encryptVector_f(conzono.mCenter),conzono.mGenerators,conzono.mA,encryptVector_f(conzono.mb),this);
+EncConZonotope Paillier::encrypt(const ConZonotope& conzono) 
+{
+  return EncConZonotope(encryptVector_f(conzono.mCenter), conzono.mGenerators, conzono.mA, encryptVector_f(conzono.mb), this);
 }
 
-EncStrip Paillier::encrypt(const Strip& s) {
-  return EncStrip(s.mH,encryptVector_f(s.mY),s.mR,this);
+EncStrip Paillier::encrypt(const Strip& s) 
+{
+  return EncStrip(s.mH, encryptVector_f(s.mY), s.mR, this);
 }
+
+std::vector<EncStrip> Paillier::encrypt(const std::vector<Strip>& strips) 
+{
+    std::vector<EncStrip> encStrips {};
+
+    for(const auto& strip : strips)
+        encStrips.push_back(EncStrip {strip, this});
+
+    return encStrips;
+}
+
 //EncZonotope Paillier::encrypt(const Strip& s) {
 //  return EncZonotope(encryptVector_f(zono.mCenter),zono.mGenerators,*this);
 //}
-Zonotope Paillier_priv::decrypt(const EncZonotope& enczono) const {
+
+Zonotope Paillier_priv::decrypt(const EncZonotope& enczono) const 
+{
   return Zonotope(decryptVector_f(enczono.mEncCenter),enczono.mGenerators);
 }
-ConZonotope Paillier_priv::decrypt(const EncConZonotope& encconzono) const {
+
+ConZonotope Paillier_priv::decrypt(const EncConZonotope& encconzono) const 
+{
   return ConZonotope(decryptVector_f(encconzono.mEncCenter),encconzono.mGenerators,encconzono.mA,decryptVector_f(encconzono.mEncb));
 }
-Strip Paillier_priv::decrypt(const EncStrip& encstrip) const {
+
+Strip Paillier_priv::decrypt(const EncStrip& encstrip) const 
+{
   return Strip(encstrip.mH, decryptVector_f(encstrip.mEncY), encstrip.mR);
 }
 
@@ -142,41 +164,46 @@ double Paillier::logbase( double x,double base) const
     return (log(x) / log(base));
 }
 
-mpz_class
-Paillier::encrypt(const mpz_class &plaintext)
+mpz_class Paillier::encrypt(const mpz_class &plaintext)
 {
     auto i = rqueue.begin();
-    if (i != rqueue.end()) {
+
+    if (i != rqueue.end()) 
+    {
         mpz_class rn = *i;
         rqueue.pop_front();
 
-        if (good_generator) {
+        if (good_generator) 
+        {
             // g = n+1 -> we can avoid an exponentiation
-            return ((1+plaintext*n)*rn) %n2;
+            return ((1 + plaintext * n) * rn) %n2;
         }
 
-        return (mpz_class_powm(g,plaintext,n2) * rn) % n2;
-    } else {
-        mpz_class r;
-        mpz_urandomm(r.get_mpz_t(),_randstate,n.get_mpz_t());
+        return (mpz_class_powm(g, plaintext, n2) * rn) % n2;
 
-        if (good_generator) {
+    } 
+    else 
+    {
+        mpz_class r;
+        mpz_urandomm(r.get_mpz_t(), _randstate, n.get_mpz_t());
+
+        if (good_generator) 
+        {
             r = mpz_class_powm(r,n,n2);
             // g = n+1 -> we can avoid an exponentiation
             return ((1+plaintext*n)*r) %n2;
         }
+
         return mpz_class_powm(g,plaintext + n*r, n2);
     }
 }
 
-
-mpz_class
-Paillier::add(const mpz_class &c0, const mpz_class &c1) const
+mpz_class Paillier::add(const mpz_class &c0, const mpz_class &c1) const
 {
     return (c0*c1) % n2;
 }
-mpz_class
-Paillier::sub(const mpz_class &c0, const mpz_class &c1) const
+
+mpz_class Paillier::sub(const mpz_class &c0, const mpz_class &c1) const
 {
     return add(c0,constMult(-1,c1));
 }
@@ -337,17 +364,18 @@ LCM(const mpz_class &a, const mpz_class &b)
 }
 
 Paillier_priv::Paillier_priv(const vector<mpz_class> &sk, gmp_randstate_t state)
-    : Paillier({sk[0]*sk[1], sk[2]},state), p(sk[0]), q(sk[1]), a(sk[3]),
-      fast(a != 0),
-      p2(p * p), q2(q * q),
-      two_p(mpz_class_ui_pow_ui(2, mpz_sizeinbase(p.get_mpz_t(),2))),
-      two_q(mpz_class_ui_pow_ui(2, mpz_sizeinbase(q.get_mpz_t(),2))),
-      pinv(mpz_class_invert(p, two_p)),
-      qinv(mpz_class_invert(q, two_q)),
-      hp(mpz_class_invert(Lfast(mpz_class_powm(g % p2, fast ? a : (p-1), p2),
-                      pinv, two_p, p), p)),
-      hq(mpz_class_invert(Lfast(mpz_class_powm(g % q2, fast ? a : (q-1), q2),
-                      qinv, two_q, q), q))
+    : Paillier({sk[0]*sk[1], sk[2]}, state)
+    , p(sk[0])
+    , q(sk[1])
+    , a(sk[3])
+    , fast(a != 0)
+    , p2(p * p), q2(q * q)
+    , two_p(mpz_class_ui_pow_ui(2, mpz_sizeinbase(p.get_mpz_t(),2)))
+    , two_q(mpz_class_ui_pow_ui(2, mpz_sizeinbase(q.get_mpz_t(),2)))
+    , pinv(mpz_class_invert(p, two_p))
+    , qinv(mpz_class_invert(q, two_q))
+    , hp(mpz_class_invert(Lfast(mpz_class_powm(g % p2, fast ? a : (p-1), p2), pinv, two_p, p), p))
+    , hq(mpz_class_invert(Lfast(mpz_class_powm(g % q2, fast ? a : (q-1), q2), qinv, two_q, q), q))
 {
     assert(sk.size() == 4);
     find_crt_factors();
@@ -368,8 +396,11 @@ std::vector<mpz_class> Paillier_priv::keygen(gmp_randstate_t state, uint nbits, 
     mpz_class p, q, n, g, a;
 
     mpz_class cp, cq;
-    do {
-        if (abits) {
+
+    do 
+    {
+        if (abits) 
+        {
             mpz_random_prime_len(a.get_mpz_t(), state, abits,40);
 
             mpz_urandom_len(cp.get_mpz_t(), state, nbits/2-abits);
@@ -382,12 +413,16 @@ std::vector<mpz_class> Paillier_priv::keygen(gmp_randstate_t state, uint nbits, 
             q = a * cq + 1;
             while (mpz_probab_prime_p(q.get_mpz_t(),40) == 0)
                 q += a;
-        } else {
+        } 
+        else 
+        {
             a = 0;
             mpz_random_prime_len(p.get_mpz_t(), state, nbits/2,40);
             mpz_random_prime_len(q.get_mpz_t(), state, nbits/2,40);
         }
+
         n = p * q;
+
     } while ((nbits != (uint) mpz_sizeinbase(n.get_mpz_t(),2)) || p == q);
 
     if (p > q)
@@ -395,9 +430,12 @@ std::vector<mpz_class> Paillier_priv::keygen(gmp_randstate_t state, uint nbits, 
 
     mpz_class lambda = LCM(p-1, q-1);
 
-    if (abits) {
+    if (abits) 
+    {
         g = mpz_class_powm(2, lambda / a, n);
-    } else {
+    } 
+    else 
+    {
         g = 1;
 //        do {
 //            g++;
@@ -592,11 +630,15 @@ Paillier:: multMatrixbyConst( double alpha,const vector < vector<encnum> > &mat)
     return prod;
 }
 //vector stuff
-vector_t<encnum> Paillier::encryptVector_f(const vector_t<double> &v) {
+vector_t<encnum> Paillier::encryptVector_f(const vector_t<double> &v) 
+{
   vector_t<encnum> res (v.rows());
-  for(int i = 0; i < v.rows(); i++) {
+
+  for(int i = 0; i < v.rows(); i++) 
+  {
     res(i) = encrypt_f(v(i));
   }
+
   return res;
 }
 

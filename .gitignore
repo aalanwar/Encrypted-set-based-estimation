@@ -1,0 +1,13 @@
+# exclude special files
+/.project
+
+# exclude directories:
+.vscode/
+build/
+
+# exclude single files
+Todo.txt
+notes.txt
+ZonoStrips
+*.bak
+*.o

@@ -49,6 +49,7 @@ int main()
 
 	vector_t<double> c (3,1);
 	c << 0,0,0;
+
 	Zonotope zono (c,G);
 	EncZonotope enczono = p.encrypt(zono);
 	
@@ -63,36 +64,35 @@ int main()
 	//std::cout << "\n Zonotope Strips Intersections \n";
 
 	
-    
-	
 	// Creating an object of CSVWriter
 	CSVReader reader("zvector_ent.csv",",");
  
 	// Get the data from CSV File
-	std::vector<std::vector<std::string> > dataList = reader.getData();
+	std::vector<std::vector<std::string>> dataList = reader.getData();
  
 	// Print the content of row by row on screen
-	std::vector<double> z(dataList.size(),1);
+	std::vector<double> z(dataList.size(), 1);
 	int index=0;
 	clock_t start_time, end_time;
+	
 	std::vector<double> sensor_time (dataList.size());
-	int sensor_time_index =0;
+	int sensor_time_index = 0;
+	
 	std::vector<double> agg_time (dataList.size());
-	int agg_time_index =0;
+	int agg_time_index = 0;
+	
 	std::vector<double> qry_time (dataList.size());
-	int qry_time_index =0;
+	int qry_time_index = 0;
+
 	for(std::vector<std::string> vec : dataList)
 	{
 		//each line of csv file is a vector (vec) of strings
 		z[index++] = std::stof(vec[0]);
-		
 	}
 
-	
-	
 	matrix_t<double> h(1,3);
-	vector_t<double> y(1) ;
-    vector_t<double> R(1) ;
+	vector_t<double> y(1);
+    vector_t<double> R(1);
 	matrix_t<double> Q(3,3);
 	Q << 0.1, 0 ,0,
 		 0  ,0.1,0,
@@ -108,19 +108,20 @@ int main()
 	int matindex = 0;
 	int sindex =0;
 	//-------------------
-	for (int i=0; i < dataList.size()/3; i=i+8)
+	for (int i = 0; i < dataList.size() / 3; i = i + 8)
 	//for (int i=0; i < 5; i++)
 	{
 		std::vector<Strip> stripsvec;
 		// -----------------  e1  ------------------------
-		std::vector<double> rotatingh = {1,0,0} ;
+		std::vector<double> rotatingh = {1,0,0};
 		stripsvec.clear();
-		for (int j=0; j<3; j++)
+
+		for (int j = 0; j < 3; j++)
 		{
-			std::rotate(rotatingh.rbegin(),rotatingh.rbegin()+1,rotatingh.rend());
-			h << rotatingh[0],rotatingh[1],rotatingh[2];
+			std::rotate(rotatingh.rbegin(), rotatingh.rbegin() + 1, rotatingh.rend());
+			h << rotatingh[0], rotatingh[1], rotatingh[2];
 			//std::cout << h << endl;
-			if(rotatingh[1]==1)
+			if(rotatingh[1] == 1)
 			{
 				R << 0.78;
 			}
@@ -128,6 +129,7 @@ int main()
 			{
 				R << 0.15;
 			}
+
 			y << z[zindex];
 			zindex = zindex +1;
 			//cout<< y <<endl;
@@ -140,17 +142,18 @@ int main()
 		zono_e1 = zono_e1.intersect(stripsvec);
 		enczono_e1 =  p.encrypt(zono_e1);
 		end_time = clock();
-		sensor_time[sensor_time_index++] = double(end_time - start_time)/ double(CLOCKS_PER_SEC);;
+		sensor_time[sensor_time_index++] = double(end_time - start_time) / double(CLOCKS_PER_SEC);
 
 		// -----------------  e2  ------------------------
-		rotatingh = {1,0,0} ;
+		rotatingh = {1,0,0};
 		stripsvec.clear();
-		for (int j=0; j<3; j++)
+
+		for (int j = 0; j < 3; j++)
 		{
 			std::rotate(rotatingh.rbegin(),rotatingh.rbegin()+1,rotatingh.rend());
 			h << rotatingh[0],rotatingh[1],rotatingh[2];
 			//std::cout << h << endl;
-			if(rotatingh[1]==1)
+			if(rotatingh[1] == 1)
 			{
 				R << 0.78;
 			}
@@ -158,6 +161,7 @@ int main()
 			{
 				R << 0.15;
 			}
+
 			y << z[zindex];
 			zindex = zindex +1;
 			//cout<< y <<endl;
@@ -165,18 +169,21 @@ int main()
 			
 			stripsvec.push_back(s);
 		}
+
 		// to avoid overflow decrypt and encrypt
 		zono_e2 = zono_e2.intersect(stripsvec);
-		enczono_e2 =  p.encrypt(zono_e2);
+		enczono_e2 = p.encrypt(zono_e2);
+
 		// -----------------  e3  ------------------------
 		rotatingh = {1,0,0} ;
 		stripsvec.clear();
+
 		for (int j=0; j<2; j++)
 		{
 			std::rotate(rotatingh.rbegin(),rotatingh.rbegin()+1,rotatingh.rend());
 			h << rotatingh[0],rotatingh[1],rotatingh[2];
 			//std::cout << h << endl;
-			if(rotatingh[1]==1)
+			if(rotatingh[1] == 1)
 			{
 				R << 0.78;
 			}
@@ -184,6 +191,7 @@ int main()
 			{
 				R << 0.15;
 			}
+
 			y << z[zindex];
 			zindex = zindex +1;
 			//cout<< y <<endl;
@@ -191,15 +199,15 @@ int main()
 			
 			stripsvec.push_back(s);
 		}
+
 		// to avoid overflow decrypt and encrypt
 		zono_e3 = zono_e3.intersect(stripsvec);
 		enczono_e3 =  p.encrypt(zono_e3);
+		
 		// ---------------- Aggregator ---------------------//
 		start_time = clock();
 		std::vector<EncZonotope> zonol = {enczono_e1, enczono_e2,enczono_e3};
 		enczono = enczono_e1.intersectMany(zonol);
-
-
 
 		// Time update
 		matrix_t<double> tempGen(enczono.mGenerators.rows(),enczono.mGenerators.cols()+Q.cols());
@@ -223,32 +231,35 @@ int main()
 			
 		
 		s[sindex] = "c_"+ std::to_string(matindex);	
-		varMap.insert(make_pair( s[sindex].c_str(), unenczono.mCenter ));
+		varMap.insert(make_pair(s[sindex].c_str(), unenczono.mCenter));
 
 		s[sindex+1] = "G_"+ std::to_string(matindex);		
-		varMap.insert(make_pair( s[sindex+1].c_str(), unenczono.mGenerators ));
-		sindex = sindex+2;
-		matindex  = matindex +1;
-		
+		varMap.insert(make_pair(s[sindex+1].c_str(), unenczono.mGenerators));
+		sindex = sindex + 2;
+		matindex = matindex + 1;
 	}
+
 	double avg = 0;
-	for (int i=0; i<sensor_time_index;i++ )
+	for (int i = 0; i < sensor_time_index; i++)
 	{
 		avg = avg + sensor_time[i];
 	}
-	avg = avg/(sensor_time_index-1);
+
+	avg = avg / (sensor_time_index - 1);
 	std::cout<<" sensor time (sec)= "<< avg << endl;
 	 
 	avg = 0;
-	for (int i=0; i<agg_time_index;i++ )
+	for (int i = 0; i < agg_time_index; i++)
 	{
 		avg = avg + agg_time[i];
 	}
-	avg = avg/(agg_time_index-1);
+
+	avg = avg / (agg_time_index - 1);
 	std::cout<<" agg time (sec)= "<< avg << endl;
 
 	std::string filename = "MATLAB/CMatFiles/cppZonoEntites.mat";		
 	Eigen2Mat::writeToFile(varMap, filename.c_str());
+
 	/*
 	map<const char*, const matrix_t<double>> varMap {
 		{ "Gres", res.mGenerators },
@@ -257,5 +268,6 @@ int main()
 	
 	Eigen2Mat::writeToFile(varMap, "amr_test.mat");
 	*/
+ 
   return 0;
 }

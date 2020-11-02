@@ -1,5 +1,3 @@
-
-
 #pragma once
 
 #include <typedef.h>
@@ -17,21 +15,37 @@
 #include <Strip/Strip.h>
 
 //Foward declaration
-namespace EncEst {
-class EncZonotope;
-class EncStrip;
-class EncConZonotope;
+namespace EncEst 
+{
+  class EncZonotope;
+  class EncStrip;
+  class EncConZonotope;
 }
 
 using namespace std;
 using namespace EncEst;
+
 struct encnum
 {
 	int  exponent;
 	mpz_class mantissa;
 	//double plaintext;
+
+    bool operator==(const encnum& other) const
+    {
+      return (this->exponent == other.exponent) && (this->mantissa == other.mantissa);
+          // && (mpz_cmp(this->mantissa.get_mpz_t(), other.mantissa.get_mpz_t()) == 0);
+    }
+
+    bool operator!=(const encnum& other) const
+    {
+      return !(*this == other);
+    }
 };
-class Paillier {
+
+
+class Paillier 
+{
  public:
     Paillier(const std::vector<mpz_class> &pk, gmp_randstate_t state);
     std::vector<mpz_class> pubkey() const { return { n, g }; }
@@ -44,6 +58,8 @@ class Paillier {
 		EncZonotope encrypt(const Zonotope& zono);
     EncConZonotope encrypt(const ConZonotope& conzono);
     EncStrip encrypt(const Strip& s);
+    // SJ:
+    std::vector<EncStrip> encrypt(const std::vector<Strip>& strips);
     encnum sub_f(const encnum &a, const encnum &b) const;
     encnum add_f(const encnum &a, const encnum &b) const;
 		vector_t<encnum> addVector_f(const vector_t<encnum> &a, const vector_t<encnum> &b) const;
@@ -56,7 +72,7 @@ class Paillier {
 
     encnum decrease_exponent_too(const encnum &y,const int new_exp) const;
     encnum constMult_f(const double &m, const encnum &c) const;
-	vector < vector<encnum> > multMatrixbyConst( double alpha,const vector < vector<encnum> > &mat) ;
+	  vector < vector<encnum> > multMatrixbyConst( double alpha,const vector < vector<encnum> > &mat) ;
 
 
     mpz_class encrypt(const mpz_class &plaintext);
@@ -74,7 +90,7 @@ class Paillier {
     void rand_gen(size_t niter = 100, size_t nmax = 1000);
     double logbase(double base, double x) const;
 
-    void printMatrix(std::vector  <std::vector<double>> &Mat);
+    void printMatrix(std::vector<std::vector<double>> &Mat);
 
     const double precision = 0.00000001 ; //0.00000001 0.001
     bool acc_per = false;
@@ -105,8 +121,9 @@ class Paillier {
     list<mpz_class> rqueue;
 };
 
-class Paillier_priv : public Paillier {
- public:
+class Paillier_priv : public Paillier 
+{
+public:
     Paillier_priv(const std::vector<mpz_class> &sk, gmp_randstate_t state);
     vector<mpz_class> privkey() const { return { p, q, g, a }; }
     void find_crt_factors();
@@ -142,7 +159,8 @@ class Paillier_priv : public Paillier {
     const mpz_class hp, hq;
 };
 
-class Paillier_priv_fast : public Paillier_priv {
+class Paillier_priv_fast : public Paillier_priv 
+{
 public:
     Paillier_priv_fast(const std::vector<mpz_class> &sk, gmp_randstate_t state);
     void precompute_powers();
